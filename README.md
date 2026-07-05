@@ -39,6 +39,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 
 - [CASE-001: AI Search For Enterprise Admins](docs/cases/CASE-001-AI-Search-For-Enterprise-Admins.md)
 - [CASE-002: Bulk Invite For Enterprise Admins](docs/cases/CASE-002-Bulk-Invite-For-Enterprise-Admins.md)
+- [CASE-003: Customer Analytics Dashboard](docs/cases/CASE-003-Customer-Analytics-Dashboard.md)
 
 ## Important Note
 
