@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Circle, Loader2, RotateCcw, Send, Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 
 const decisionTypes = [
   "Should we build a feature?",
@@ -48,12 +47,19 @@ export default function App() {
     setError("");
 
     try {
-      const result = await base44.functions.invoke("run-validate-conversation", {
-        idea: displayIdea,
-        messages: nextMessages,
+      const response = await fetch("/functions/run-validate-conversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idea: displayIdea,
+          messages: nextMessages,
+        }),
       });
+      const result = await response.json();
 
-      if (!result?.success || !result?.conversation) {
+      if (!response.ok || !result?.success || !result?.conversation) {
         throw new Error(result?.error || "Validate could not continue the conversation.");
       }
 
