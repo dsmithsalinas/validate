@@ -24,6 +24,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 
 ## Founding Documents
 
+- [Constitution](CONSTITUTION.md)
 - [RFC-001: Manifesto](docs/rfc/RFC-001-Manifesto.md)
 - [RFC-002: Evidence Model](docs/rfc/RFC-002-Evidence-Model.md)
 - [RFC-003: Reasoning Framework](docs/rfc/RFC-003-Reasoning-Framework.md)
