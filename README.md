@@ -51,6 +51,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 ## Evals
 
 - [EVAL-001: Prompt Manual Test](docs/evals/EVAL-001-Prompt-Manual-Test.md)
+- [EVAL-002: Model Run](docs/evals/EVAL-002-Model-Run.md)
 
 ## Manual Test Cases
 
