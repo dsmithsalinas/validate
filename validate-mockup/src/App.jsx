@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Circle,
-  Loader2,
-  RotateCcw,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Circle, Loader2, RotateCcw, Send, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const decisionTypes = [
@@ -18,79 +10,14 @@ const decisionTypes = [
   "Something else",
 ];
 
-const conversationSteps = [
-  {
-    key: "decisionType",
-    eyebrow: "Decision intent",
-    question: "Which best describes what you are trying to decide?",
-    type: "choice",
-    options: decisionTypes,
-  },
-  {
-    key: "customerProblem",
-    eyebrow: "Customer problem",
-    question: "What customer or user problem does this solve?",
-    placeholder:
-      "Example: Admins struggle to find settings and policy docs in a complex console.",
-  },
-  {
-    key: "evidence",
-    eyebrow: "Evidence",
-    question: "What evidence do you have?",
-    placeholder:
-      "Example: 3 customer success managers mentioned it, but we have not checked support tickets yet.",
-  },
-  {
-    key: "users",
-    eyebrow: "Users",
-    question: "Who is affected, and how often?",
-    placeholder:
-      "Example: Larger enterprise admins, probably during onboarding and account changes.",
-  },
-  {
-    key: "businessGoal",
-    eyebrow: "Business goal",
-    question: "Why does this matter to the business now?",
-    placeholder: "Example: Enterprise expansion is a priority this quarter.",
-  },
-  {
-    key: "alternatives",
-    eyebrow: "Alternatives",
-    question: "What do people use instead today?",
-    placeholder:
-      "Example: Support, customer success, docs, search, or manual workarounds.",
-  },
-  {
-    key: "risks",
-    eyebrow: "Risks",
-    question: "What risks or concerns should Validate consider?",
-    placeholder:
-      "Example: Trust, privacy, hallucinations, unreliable data, or roadmap distraction.",
-  },
-  {
-    key: "validationTest",
-    eyebrow: "Smallest test",
-    question: "What is the smallest test that would increase confidence?",
-    placeholder: "Example: Interview 5 admins and prototype the top 3 workflows.",
-  },
-  {
-    key: "costOfDelay",
-    eyebrow: "Cost of delay",
-    question: "What happens if you wait 30 to 90 days?",
-    placeholder: "Example: Support load may continue, but no known deals are blocked.",
-  },
-];
-
-const firstAnswerStepIndex = 1;
 const storageKey = "validate:last-decision";
 
 export default function App() {
   const [idea, setIdea] = useState("");
   const [started, setStarted] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
-  const [decisionType, setDecisionType] = useState(decisionTypes[0]);
-  const [answers, setAnswers] = useState({});
-  const [draftAnswer, setDraftAnswer] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [answer, setAnswer] = useState("");
+  const [conversationState, setConversationState] = useState(null);
   const [decision, setDecision] = useState(null);
   const [lastDecision, setLastDecision] = useState(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -100,13 +27,10 @@ export default function App() {
     return idea.trim() || "We're considering building AI search for enterprise admins.";
   }, [idea]);
 
-  const currentStep = conversationSteps[stepIndex];
-  const answeredCount = conversationSteps.filter((step) => {
-    if (step.key === "decisionType") return Boolean(decisionType);
-    return Boolean((answers[step.key] || "").trim());
-  }).length;
-  const isLastStep = stepIndex === conversationSteps.length - 1;
-  const hasEnoughForDecision = answeredCount >= 6;
+  const currentQuestion = conversationState?.mode === "question" ? conversationState.question : "";
+  const showDecisionChoices = currentQuestion
+    .toLowerCase()
+    .includes("which best describes what you are trying to decide");
 
   useEffect(() => {
     const savedDecision = window.localStorage.getItem(storageKey);
@@ -119,91 +43,80 @@ export default function App() {
     }
   }, []);
 
-  const startConversation = (event) => {
+  const askValidate = async (nextMessages) => {
+    setIsThinking(true);
+    setError("");
+
+    try {
+      const result = await base44.functions.invoke("run-validate-conversation", {
+        idea: displayIdea,
+        messages: nextMessages,
+      });
+
+      if (!result?.success || !result?.conversation) {
+        throw new Error(result?.error || "Validate could not continue the conversation.");
+      }
+
+      const nextState = result.conversation;
+      setConversationState(nextState);
+
+      if (nextState.mode === "decision" && nextState.decision) {
+        const completedDecision = {
+          idea: displayIdea,
+          decidedAt: new Date().toISOString(),
+          decision: nextState.decision,
+        };
+
+        setDecision(nextState.decision);
+        setLastDecision(completedDecision);
+        window.localStorage.setItem(storageKey, JSON.stringify(completedDecision));
+      }
+
+      return nextState;
+    } catch (caughtError) {
+      setError(caughtError?.message || "Something went wrong while asking Validate.");
+      return null;
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
+  const startConversation = async (event) => {
     event.preventDefault();
     setStarted(true);
-    setStepIndex(0);
+    setMessages([]);
+    setAnswer("");
     setDecision(null);
+    setConversationState(null);
     setError("");
-    setDraftAnswer("");
+    await askValidate([]);
   };
 
-  const selectDecisionType = (type) => {
-    setDecisionType(type);
-    setError("");
-  };
+  const submitAnswer = async (value = answer) => {
+    const trimmedAnswer = value.trim();
+    if (!trimmedAnswer || isThinking || decision) return;
 
-  const updateAnswer = (value) => {
-    setDraftAnswer(value);
-    setAnswers((current) => ({ ...current, [currentStep.key]: value }));
-    setError("");
-  };
+    const assistantMessage = currentQuestion
+      ? { role: "validate", content: currentQuestion }
+      : null;
+    const userMessage = { role: "user", content: trimmedAnswer };
+    const nextMessages = assistantMessage
+      ? [...messages, assistantMessage, userMessage]
+      : [...messages, userMessage];
 
-  const goToStep = (nextIndex) => {
-    const nextStep = conversationSteps[nextIndex];
-    setStepIndex(nextIndex);
-    setDraftAnswer(nextStep.key === "decisionType" ? "" : answers[nextStep.key] || "");
-    setError("");
-  };
-
-  const goForward = () => {
-    if (currentStep.type !== "choice" && !draftAnswer.trim()) {
-      setError("Validate needs your best current answer before moving on.");
-      return;
-    }
-
-    if (!isLastStep) {
-      goToStep(stepIndex + 1);
-    }
-  };
-
-  const goBack = () => {
-    if (stepIndex > 0) {
-      goToStep(stepIndex - 1);
-    }
+    setMessages(nextMessages);
+    setAnswer("");
+    await askValidate(nextMessages);
   };
 
   const resetConversation = () => {
     setIdea("");
     setStarted(false);
-    setStepIndex(0);
-    setDecisionType(decisionTypes[0]);
-    setAnswers({});
-    setDraftAnswer("");
+    setMessages([]);
+    setAnswer("");
+    setConversationState(null);
     setDecision(null);
     setError("");
-  };
-
-  const makeDecision = async () => {
-    setIsThinking(true);
-    setError("");
-    setDecision(null);
-
-    try {
-      const result = await base44.functions.invoke("run-validate-decision", {
-        idea: displayIdea,
-        decisionType,
-        answers,
-      });
-
-      if (!result?.success || !result?.decision) {
-        throw new Error(result?.error || "Validate could not produce a recommendation.");
-      }
-
-      const completedDecision = {
-        idea: displayIdea,
-        decidedAt: new Date().toISOString(),
-        decision: result.decision,
-      };
-
-      setDecision(result.decision);
-      setLastDecision(completedDecision);
-      window.localStorage.setItem(storageKey, JSON.stringify(completedDecision));
-    } catch (caughtError) {
-      setError(caughtError?.message || "Something went wrong while asking Validate.");
-    } finally {
-      setIsThinking(false);
-    }
   };
 
   return (
@@ -227,15 +140,21 @@ export default function App() {
             <input
               value={idea}
               onChange={(event) => setIdea(event.target.value)}
+              disabled={started && !decision}
               placeholder="We're considering building AI search for enterprise admins."
-              className="h-14 min-w-0 flex-1 rounded-full border-0 bg-transparent px-5 text-base text-black outline-none placeholder:text-neutral-400"
+              className="h-14 min-w-0 flex-1 rounded-full border-0 bg-transparent px-5 text-base text-black outline-none placeholder:text-neutral-400 disabled:text-neutral-500"
             />
             <button
               type="submit"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-neutral-800"
+              disabled={isThinking || (started && !decision)}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-neutral-800 disabled:bg-neutral-300"
               aria-label="Begin conversation"
             >
-              <ArrowRight className="h-5 w-5" />
+              {isThinking && !started ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-5 w-5" />
+              )}
             </button>
           </form>
 
@@ -248,144 +167,108 @@ export default function App() {
                   </p>
                   <p className="mt-2 text-lg font-medium text-black">{displayIdea}</p>
                 </div>
-                <div className="rounded-full border border-neutral-200 px-4 py-2 text-sm text-neutral-600">
-                  {answeredCount}/{conversationSteps.length}
-                </div>
+                <button
+                  type="button"
+                  onClick={resetConversation}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-black transition hover:border-black"
+                  aria-label="Reset conversation"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </button>
               </div>
 
-              <div className="mt-6">
-                <div className="h-1.5 overflow-hidden rounded-full bg-neutral-100">
-                  <div
-                    className="h-full rounded-full bg-black transition-all duration-300"
-                    style={{ width: `${(answeredCount / conversationSteps.length) * 100}%` }}
-                  />
-                </div>
-              </div>
+              <div className="mt-6 space-y-5">
+                {messages.map((message, index) => (
+                  <MessageBubble key={`${message.role}-${index}`} message={message} />
+                ))}
 
-              <div className="mt-7">
-                <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
-                  {currentStep.eyebrow}
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold leading-tight text-black">
-                  {currentStep.question}
-                </h2>
-
-                {currentStep.type === "choice" ? (
-                  <div className="mt-5 space-y-2">
-                    {currentStep.options.map((type) => {
-                      const selected = type === decisionType;
-                      return (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => selectDecisionType(type)}
-                          className="flex w-full items-center gap-3 rounded-full border border-neutral-200 px-4 py-3 text-left text-sm transition hover:border-black"
-                        >
-                          {selected ? (
-                            <Check className="h-4 w-4 shrink-0 text-black" />
-                          ) : (
-                            <Circle className="h-4 w-4 shrink-0 text-neutral-300" />
-                          )}
-                          <span className={selected ? "font-medium text-black" : "text-neutral-600"}>
-                            {type}
-                          </span>
-                        </button>
-                      );
-                    })}
+                {!decision && conversationState?.pushback && (
+                  <div className="border-l-2 border-black pl-4 text-sm leading-6 text-neutral-700">
+                    {conversationState.pushback}
                   </div>
-                ) : (
-                  <textarea
-                    value={draftAnswer}
-                    onChange={(event) => updateAnswer(event.target.value)}
-                    placeholder={currentStep.placeholder}
-                    className="mt-5 min-h-36 w-full resize-none rounded-[1.5rem] border border-neutral-200 bg-white p-4 text-base leading-7 text-black outline-none placeholder:text-neutral-400 focus:border-black"
-                  />
                 )}
 
-                {error && <p className="mt-3 text-sm leading-6 text-red-600">{error}</p>}
+                {currentQuestion && !decision && (
+                  <div className="border-t border-neutral-200 pt-5">
+                    <div className="flex items-start gap-3">
+                      <Sparkles className="mt-1 h-4 w-4 shrink-0 text-black" />
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                          Validate asks
+                        </p>
+                        <p className="mt-2 text-2xl font-semibold leading-tight text-black">
+                          {currentQuestion}
+                        </p>
+                        {conversationState?.readiness && (
+                          <p className="mt-3 text-sm leading-6 text-neutral-600">
+                            {conversationState.readiness}
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      disabled={stepIndex === 0}
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-black transition hover:border-black disabled:cursor-not-allowed disabled:text-neutral-300"
-                      aria-label="Previous question"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={resetConversation}
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-black transition hover:border-black"
-                      aria-label="Reset conversation"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    {!isLastStep && (
-                      <button
-                        type="button"
-                        onClick={goForward}
-                        className="inline-flex h-11 items-center gap-2 rounded-full border border-black px-5 text-sm font-medium text-black transition hover:bg-neutral-50"
+                    {showDecisionChoices ? (
+                      <div className="mt-5 space-y-2">
+                        {decisionTypes.map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => submitAnswer(type)}
+                            disabled={isThinking}
+                            className="flex w-full items-center gap-3 rounded-full border border-neutral-200 px-4 py-3 text-left text-sm transition hover:border-black disabled:cursor-not-allowed disabled:text-neutral-400"
+                          >
+                            <Circle className="h-4 w-4 shrink-0 text-neutral-300" />
+                            <span>{type}</span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <form
+                        onSubmit={(event) => {
+                          event.preventDefault();
+                          submitAnswer();
+                        }}
+                        className="mt-5 flex items-end gap-2"
                       >
-                        Next
-                        <ArrowRight className="h-4 w-4" />
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={makeDecision}
-                      disabled={isThinking || !hasEnoughForDecision}
-                      className="inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
-                    >
-                      {isThinking ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Sparkles className="h-4 w-4" />
-                      )}
-                      {isThinking ? "Thinking..." : "Recommend"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {answeredCount > firstAnswerStepIndex && (
-                <div className="mt-7 border-t border-neutral-200 pt-5">
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
-                    Captured so far
-                  </p>
-                  <div className="mt-3 space-y-3">
-                    {conversationSteps.slice(firstAnswerStepIndex).map((step) => {
-                      const value = answers[step.key];
-                      if (!value?.trim()) return null;
-                      return (
+                        <textarea
+                          value={answer}
+                          onChange={(event) => setAnswer(event.target.value)}
+                          placeholder="Answer with what you know. Weak evidence is okay; Validate will account for it."
+                          className="min-h-28 flex-1 resize-none rounded-[1.5rem] border border-neutral-200 bg-white p-4 text-base leading-7 text-black outline-none placeholder:text-neutral-400 focus:border-black"
+                        />
                         <button
-                          key={step.key}
-                          type="button"
-                          onClick={() => goToStep(conversationSteps.findIndex((item) => item.key === step.key))}
-                          className="block w-full border-t border-neutral-100 pt-3 text-left"
+                          type="submit"
+                          disabled={isThinking || !answer.trim()}
+                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                          aria-label="Send answer"
                         >
-                          <span className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-400">
-                            {step.eyebrow}
-                          </span>
-                          <span className="mt-1 block text-sm leading-6 text-neutral-700">{value}</span>
+                          {isThinking ? (
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                          ) : (
+                            <Send className="h-5 w-5" />
+                          )}
                         </button>
-                      );
-                    })}
+                      </form>
+                    )}
                   </div>
-                </div>
-              )}
+                )}
+
+                {isThinking && started && (
+                  <div className="flex items-center gap-2 text-sm text-neutral-500">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Validate is thinking...
+                  </div>
+                )}
+
+                {error && <p className="text-sm leading-6 text-red-600">{error}</p>}
+              </div>
             </div>
           )}
         </div>
 
         {decision && <DecisionCard decision={decision} />}
 
-        {!decision && lastDecision && (
+        {!started && lastDecision && (
           <section className="mt-6 w-full max-w-3xl border-t border-neutral-200 pt-5 text-left">
             <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
               Last decision
@@ -400,6 +283,24 @@ export default function App() {
         )}
       </section>
     </main>
+  );
+}
+
+function MessageBubble({ message }) {
+  const isUser = message.role === "user";
+
+  return (
+    <div className={isUser ? "flex justify-end" : "flex justify-start"}>
+      <div
+        className={`max-w-[88%] rounded-[1.5rem] px-4 py-3 text-sm leading-6 ${
+          isUser
+            ? "bg-black text-white"
+            : "border border-neutral-200 bg-white text-neutral-700"
+        }`}
+      >
+        {message.content}
+      </div>
+    </div>
   );
 }
 
