@@ -63,6 +63,7 @@ Previous evals:
 - [EVAL-002: Model Run](docs/evals/EVAL-002-Model-Run.md)
 - [EVAL-003: Blind Model Run](docs/evals/EVAL-003-Blind-Model-Run.md)
 - [EVAL-004: Blind Model Run With PROMPT-002](docs/evals/EVAL-004-Blind-Model-Run-Prompt-002.md)
+- [EVAL-006: Live Base44 Function Run](docs/evals/EVAL-006-Live-Base44-Function-Run.md)
 
 ## Manual Test Cases
 
@@ -82,6 +83,12 @@ Run the frozen baseline eval suite:
 
 ```sh
 npm run eval:baseline
+```
+
+Run the live Base44 function eval:
+
+```sh
+npm run eval:live-base44
 ```
 
 Run the Base44 mockup:

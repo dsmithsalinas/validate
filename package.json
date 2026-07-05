@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "eval:baseline": "node scripts/run-baseline-eval.mjs"
+    "eval:baseline": "node scripts/run-baseline-eval.mjs",
+    "eval:live-base44": "node scripts/run-live-base44-eval.mjs"
   }
 }
