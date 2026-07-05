@@ -48,6 +48,10 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 
 - [PROMPT-001: Validate System Instructions](docs/prompts/PROMPT-001-Validate-System-Instructions.md)
 
+## Evals
+
+- [EVAL-001: Prompt Manual Test](docs/evals/EVAL-001-Prompt-Manual-Test.md)
+
 ## Manual Test Cases
 
 - [CASE-001: AI Search For Enterprise Admins](docs/cases/CASE-001-AI-Search-For-Enterprise-Admins.md)
