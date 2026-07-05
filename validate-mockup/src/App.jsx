@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Check, Circle, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Circle, Loader2, Sparkles } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const decisionTypes = [
   "Should we build a feature?",
@@ -9,18 +10,57 @@ const decisionTypes = [
   "Something else",
 ];
 
-const evidencePrompts = [
-  "Who is asking for this?",
-  "What evidence do we have?",
-  "What happens if we wait?",
+const questionFields = [
+  {
+    key: "customerProblem",
+    label: "What customer or user problem does this solve?",
+    placeholder: "Example: Admins struggle to find settings and policy docs in a complex console.",
+  },
+  {
+    key: "evidence",
+    label: "What evidence do you have?",
+    placeholder: "Example: 3 customer success managers mentioned it, but we have not checked support tickets yet.",
+  },
+  {
+    key: "users",
+    label: "Who is affected, and how often?",
+    placeholder: "Example: Larger enterprise admins, probably during onboarding and account changes.",
+  },
+  {
+    key: "businessGoal",
+    label: "Why does this matter to the business now?",
+    placeholder: "Example: Enterprise expansion is a priority this quarter.",
+  },
+  {
+    key: "alternatives",
+    label: "What do people use instead today?",
+    placeholder: "Example: Support, customer success, docs, search, or manual workarounds.",
+  },
+  {
+    key: "risks",
+    label: "What risks or concerns should Validate consider?",
+    placeholder: "Example: Trust, privacy, hallucinations, unreliable data, or roadmap distraction.",
+  },
+  {
+    key: "validationTest",
+    label: "What is the smallest test that would increase confidence?",
+    placeholder: "Example: Interview 5 admins and prototype the top 3 workflows.",
+  },
+  {
+    key: "costOfDelay",
+    label: "What happens if you wait 30 to 90 days?",
+    placeholder: "Example: Support load may continue, but no known deals are blocked.",
+  },
 ];
 
 export default function App() {
   const [idea, setIdea] = useState("");
   const [started, setStarted] = useState(false);
   const [decisionType, setDecisionType] = useState(decisionTypes[0]);
-  const [evidence, setEvidence] = useState("");
+  const [answers, setAnswers] = useState({});
   const [decision, setDecision] = useState(null);
+  const [isThinking, setIsThinking] = useState(false);
+  const [error, setError] = useState("");
 
   const displayIdea = useMemo(() => {
     return idea.trim() || "We're considering building AI search for enterprise admins.";
@@ -30,18 +70,35 @@ export default function App() {
     event.preventDefault();
     setStarted(true);
     setDecision(null);
+    setError("");
   };
 
-  const makeDecision = () => {
-    setDecision({
-      recommendation: "Validate",
-      confidence: 42,
-      investment: 64,
-      decisionDebt: 72,
-      potential: 82,
-      reason:
-        "This sounds strategically meaningful, but the current evidence is still thin. Validate should learn whether the problem is frequent, painful, and worth solving before recommending Build.",
-    });
+  const updateAnswer = (key, value) => {
+    setAnswers((current) => ({ ...current, [key]: value }));
+  };
+
+  const makeDecision = async () => {
+    setIsThinking(true);
+    setError("");
+    setDecision(null);
+
+    try {
+      const result = await base44.functions.invoke("run-validate-decision", {
+        idea: displayIdea,
+        decisionType,
+        answers,
+      });
+
+      if (!result?.success || !result?.decision) {
+        throw new Error(result?.error || "Validate could not produce a recommendation.");
+      }
+
+      setDecision(result.decision);
+    } catch (caughtError) {
+      setError(caughtError?.message || "Something went wrong while asking Validate.");
+    } finally {
+      setIsThinking(false);
+    }
   };
 
   return (
@@ -86,7 +143,7 @@ export default function App() {
                 <p className="mt-2 text-lg font-medium text-black">{displayIdea}</p>
               </div>
 
-              <div className="grid gap-5 md:grid-cols-[1fr_1fr]">
+              <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
                 <div>
                   <p className="text-sm font-medium text-black">
                     Which best describes what you are trying to decide?
@@ -117,32 +174,37 @@ export default function App() {
 
                 <div>
                   <p className="text-sm font-medium text-black">
-                    Add the strongest evidence you have so far.
+                    Answer what you know. It is okay if some evidence is weak.
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {evidencePrompts.map((prompt) => (
-                      <span
-                        key={prompt}
-                        className="rounded-full border border-neutral-200 px-3 py-1 text-xs text-neutral-500"
-                      >
-                        {prompt}
-                      </span>
+                  <div className="mt-3 space-y-4">
+                    {questionFields.map((field) => (
+                      <label key={field.key} className="block">
+                        <span className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">
+                          {field.label}
+                        </span>
+                        <textarea
+                          value={answers[field.key] || ""}
+                          onChange={(event) => updateAnswer(field.key, event.target.value)}
+                          placeholder={field.placeholder}
+                          className="mt-2 min-h-20 w-full resize-none rounded-3xl border border-neutral-200 bg-white p-4 text-sm leading-6 text-black outline-none placeholder:text-neutral-400 focus:border-black"
+                        />
+                      </label>
                     ))}
                   </div>
-                  <textarea
-                    value={evidence}
-                    onChange={(event) => setEvidence(event.target.value)}
-                    placeholder="Example: We heard this from 3 customer success managers, but we do not have product analytics or direct customer interviews yet."
-                    className="mt-4 min-h-36 w-full resize-none rounded-3xl border border-neutral-200 bg-white p-4 text-sm leading-6 text-black outline-none placeholder:text-neutral-400 focus:border-black"
-                  />
                   <button
                     type="button"
                     onClick={makeDecision}
+                    disabled={isThinking}
                     className="mt-3 inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800"
                   >
-                    <Sparkles className="h-4 w-4" />
-                    Make recommendation
+                    {isThinking ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-4 w-4" />
+                    )}
+                    {isThinking ? "Thinking..." : "Make recommendation"}
                   </button>
+                  {error && <p className="mt-3 text-sm leading-6 text-red-600">{error}</p>}
                 </div>
               </div>
             </div>
@@ -163,17 +225,46 @@ export default function App() {
               </div>
             </div>
 
-            <p className="mt-5 max-w-2xl text-base leading-7 text-neutral-700">{decision.reason}</p>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-neutral-700">{decision.summary}</p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <Metric label="Investment" value={decision.investment} />
               <Metric label="Decision Debt" value={decision.decisionDebt} />
               <Metric label="Potential" value={decision.potential} />
             </div>
+
+            <div className="mt-7 grid gap-6 md:grid-cols-2">
+              <EvidenceList title="Strongest Evidence" items={decision.strongestEvidence} />
+              <EvidenceList title="Evidence Gaps" items={decision.evidenceGaps} />
+              <EvidenceList title="Key Assumptions" items={decision.keyAssumptions} />
+              <EvidenceList title="Decision Risks" items={decision.decisionRisks} />
+            </div>
+
+            <div className="mt-7 border-t border-neutral-200 pt-5">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                Next Best Action
+              </p>
+              <p className="mt-2 text-base leading-7 text-black">{decision.nextBestAction}</p>
+            </div>
           </section>
         )}
       </section>
     </main>
+  );
+}
+
+function EvidenceList({ title, items = [] }) {
+  return (
+    <div className="border-t border-neutral-200 pt-4">
+      <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">{title}</p>
+      <ul className="mt-3 space-y-2 text-sm leading-6 text-neutral-700">
+        {items.length > 0 ? (
+          items.map((item) => <li key={item}>- {item}</li>)
+        ) : (
+          <li>- None provided.</li>
+        )}
+      </ul>
+    </div>
   );
 }
 

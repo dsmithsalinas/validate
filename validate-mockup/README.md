@@ -1,41 +1,46 @@
-# Todo App
+# Validate Mockup
 
-A simple todo list app built with React and Base44 backend.
+A small Base44-hosted prototype for testing the first Validate conversation flow.
+
+The UI asks for a product decision, expands into structured questions, and calls a Base44 backend function to generate a real Build / Validate / Pause / Reject recommendation.
+
+Live app:
+
+[https://validate-mockup-51c4e7bb.base44.app](https://validate-mockup-51c4e7bb.base44.app)
 
 ## Structure
 
-```
-base44/               # Backend configuration
-├── config.jsonc      # Project settings
-└── entities/         # Data schemas
-    └── task.jsonc    # Task entity
-
-src/                  # Frontend code
-├── App.jsx           # Main todo app
-├── api/              # Base44 client
-├── components/ui/    # UI components
-└── lib/              # Utilities
+```text
+base44/
+  config.jsonc
+  functions/
+    run-validate-decision/
+      function.jsonc
+      index.ts
+src/
+  App.jsx
+  api/base44Client.js
 ```
 
 ## Development
 
-```bash
+```sh
 npm install
 npm run dev
 ```
 
-## Commands
+## Build And Deploy
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-
-## Base44 CLI
-
-```bash
-base44 login          # Authenticate
-base44 entities push  # Push entity schemas
-base44 deploy         # Deploy backend + hosting
+```sh
+npm run build
+npx base44 deploy -y
 ```
+
+## Current Behavior
+
+- The browser collects the product idea, decision intent, and structured answers.
+- The backend function calls Base44 `Core.InvokeLLM`.
+- The function returns a recommendation, scores, evidence gaps, assumptions, risks, and next best action.
+- Scores are normalized to 0-100 before reaching the UI.
+
+This is still a prototype. It does not yet persist decisions, support accounts, or run the full baseline eval suite inside the app.

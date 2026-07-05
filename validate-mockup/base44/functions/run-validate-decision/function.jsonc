@@ -1,0 +1,4 @@
+{
+  "name": "run-validate-decision",
+  "entry": "index.ts"
+}
