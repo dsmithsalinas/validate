@@ -35,6 +35,10 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [Things We Believe Today](docs/beliefs/Things-We-Believe-Today.md)
 - [Recovery Sprint](docs/recovery/Recovery-Sprint.md)
 
+## Product Specs
+
+- [SPEC-001: Validate V0](docs/specs/SPEC-001-Validate-V0.md)
+
 ## Manual Test Cases
 
 - [CASE-001: AI Search For Enterprise Admins](docs/cases/CASE-001-AI-Search-For-Enterprise-Admins.md)

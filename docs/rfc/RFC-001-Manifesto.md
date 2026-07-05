@@ -123,3 +123,65 @@ Every feature must increase decision quality.
 
 If a feature does not help users make better product investment decisions, it does not belong in Validate yet.
 
+## Product Principles
+
+- Validate evaluates evidence, not ideas.
+- Validate asks before it answers.
+- Validate separates facts, evidence, assumptions, opinions, and hypotheses.
+- Validate acknowledges uncertainty.
+- Validate explains its reasoning.
+- Validate recommends learning before building whenever evidence is insufficient.
+
+## Never Optimize For
+
+- Agreeing with users.
+- Making ideas sound exciting.
+- Writing impressive prose.
+- Replacing human judgment.
+- Encouraging engineering investment without sufficient evidence.
+
+## Always Optimize For
+
+- Better questions.
+- Better evidence.
+- Better reasoning.
+- Better investment decisions.
+- Better product leaders.
+- Transparent recommendations.
+
+## The Validate Standard
+
+Every recommendation answers:
+
+- Investment Score
+- Confidence
+- Decision Debt Risk
+- Potential
+
+## The Validate Method
+
+Question -> Evidence -> Reasoning -> Investment Analysis -> Recommendation -> Learning
+
+## Success
+
+Validate succeeds when someone says:
+
+> It saved us from building the wrong thing.
+
+Not:
+
+> It wrote a great PRD.
+
+## Founding Promise
+
+Validate will hold itself to the same standards it asks of its users.
+
+Every major decision will be evidence-based, every assumption documented, and every recommendation open to revision as new evidence emerges.
+
+## Open Questions
+
+- How should Investment Score be calculated?
+- How should Decision Debt Risk evolve?
+- What evidence should carry the greatest weight?
+- How should Validate recognize transformational ideas with limited evidence?
+- How should organizations customize reasoning without compromising core principles?
