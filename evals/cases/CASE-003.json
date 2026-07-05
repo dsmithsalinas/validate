@@ -1,0 +1,34 @@
+{
+  "id": "CASE-003",
+  "title": "Customer Analytics Dashboard",
+  "expected": "Pause",
+  "checks": [
+    {
+      "type": "score_min",
+      "score": "decisionDebt",
+      "value": 65,
+      "reason": "Customer-facing analytics with inconsistent instrumentation must remain High Decision Debt."
+    }
+  ],
+  "transcript": [
+    ["User", "We're considering building a customer-facing analytics dashboard."],
+    ["Validate", "Let's clarify the decision before we evaluate it. Which best describes what you're trying to decide?"],
+    ["User", "Should we prioritize this now?"],
+    ["Validate", "What customer or user problem do you believe a customer-facing analytics dashboard solves?"],
+    ["User", "Customers want more visibility into usage, adoption, and account health so admins can report progress internally."],
+    ["Validate", "What evidence do you have that this problem exists?"],
+    ["User", "Three customer success managers say customers ask for reporting during business reviews. Two customers asked for exports in the last month."],
+    ["Validate", "Do you have direct customer interviews, support tickets, or behavioral data showing this is frequent or painful?"],
+    ["User", "Not yet. We have not interviewed customers specifically about analytics. We have a few notes from QBRs and some export requests."],
+    ["Validate", "How does this connect to current company strategy?"],
+    ["User", "The company is currently focused on enterprise onboarding and activation. Analytics might help later, but it is not part of the current quarterly strategy."],
+    ["Validate", "What else is competing for engineering time?"],
+    ["User", "Bulk invite, onboarding reliability, and admin role improvements are all competing for the same team."],
+    ["Validate", "What data would power the dashboard, and is it reliable enough today?"],
+    ["User", "Some events exist, but instrumentation is inconsistent. We would need to clean up tracking before showing customer-facing metrics."],
+    ["Validate", "What happens if you do nothing for 30 to 90 days?"],
+    ["User", "Customer success will keep sending manual reports for some accounts. It is annoying, but not currently blocking deals or pilots."],
+    ["Validate", "What condition would make this worth reopening?"],
+    ["User", "If enterprise customers repeatedly ask for reporting during pilots, or if manual reporting becomes a measurable customer success burden."]
+  ]
+}

@@ -7,6 +7,14 @@ Model: gpt-4.1-mini
 Run Type: Blind model run
 Runner: work/run-eval-003.mjs
 
+Canonical Runner: scripts/run-baseline-eval.mjs
+
+Current Command:
+
+```sh
+npm run eval:baseline
+```
+
 ## Calibration Milestone
 
 PROMPT-002 successfully improved Decision Debt calibration without reducing recommendation accuracy.

@@ -1,0 +1,40 @@
+{
+  "id": "CASE-004",
+  "title": "AI-Generated Admin Avatars",
+  "expected": "Reject",
+  "checks": [
+    {
+      "type": "score_max",
+      "score": "investment",
+      "value": 35,
+      "reason": "Low customer value and poor strategic fit should keep the Investment Score low."
+    },
+    {
+      "type": "score_max",
+      "score": "potential",
+      "value": 40,
+      "reason": "Novelty without customer value should not be treated as high Potential."
+    }
+  ],
+  "transcript": [
+    ["User", "We're considering building AI-generated profile avatars for enterprise admins."],
+    ["Validate", "Let's clarify the decision before we evaluate it. Which best describes what you're trying to decide?"],
+    ["User", "Should we build a feature?"],
+    ["Validate", "What customer or user problem do you believe AI-generated admin avatars solve?"],
+    ["User", "Admin profiles look plain. We think generated avatars could make the admin experience feel more modern and personalized."],
+    ["Validate", "What evidence do you have that this problem exists?"],
+    ["User", "We do not have customer complaints. One designer suggested it during a polish review, and a few people internally thought it sounded fun."],
+    ["Validate", "Do you have customer evidence, usage metrics, support tickets, or sales feedback showing this matters?"],
+    ["User", "No. Customers have not asked for it. Support tickets and sales feedback are focused on onboarding, permissions, reporting, and integrations."],
+    ["Validate", "What business or strategic goal would this support?"],
+    ["User", "It might make the product feel more modern, but it does not directly support the current enterprise onboarding strategy."],
+    ["Validate", "What risks or concerns exist?"],
+    ["User", "Some enterprise customers have strict policies around profile imagery and AI-generated content. Legal and security might need to review it."],
+    ["Validate", "What else is competing for engineering time?"],
+    ["User", "Bulk invite, onboarding reliability, admin roles, and integration work are higher-priority enterprise asks."],
+    ["Validate", "What happens if you do nothing for 30 to 90 days?"],
+    ["User", "Probably nothing. Admin profiles remain plain, but no known customer workflow is blocked."],
+    ["Validate", "Is there evidence this would improve adoption, retention, revenue, support load, or customer satisfaction?"],
+    ["User", "No. We do not have evidence that avatars would improve any product or business metric."]
+  ]
+}

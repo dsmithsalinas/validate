@@ -1,0 +1,40 @@
+{
+  "id": "CASE-001",
+  "title": "AI Search For Enterprise Admins",
+  "expected": "Validate",
+  "checks": [
+    {
+      "type": "score_min",
+      "score": "decisionDebt",
+      "value": 65,
+      "reason": "Weak evidence plus AI search over admin workflows should keep Decision Debt high."
+    },
+    {
+      "type": "score_max",
+      "score": "confidence",
+      "value": 50,
+      "reason": "Confidence should remain limited because direct customer and behavioral evidence are missing."
+    }
+  ],
+  "transcript": [
+    ["User", "We're considering building AI search for enterprise admins."],
+    ["Validate", "Let's clarify the decision before we evaluate it. Which best describes what you're trying to decide?"],
+    ["User", "Should we build a feature?"],
+    ["Validate", "What customer or user problem do you believe AI search solves for enterprise admins?"],
+    ["User", "Admins have trouble finding settings, policy documentation, audit information, and user management actions across a complex admin console."],
+    ["Validate", "What evidence do you have that this problem exists?"],
+    ["User", "We have heard it from a few customer success managers and one enterprise prospect mentioned it during a sales call."],
+    ["Validate", "Do you have customer evidence, usage metrics, support tickets, or product analytics showing this is frequent or painful?"],
+    ["User", "Not yet. We have not pulled support tickets or product analytics."],
+    ["Validate", "How many customers or admins are affected?"],
+    ["User", "We do not know. We suspect larger enterprise accounts are more affected."],
+    ["Validate", "What happens if you do nothing for 30 to 90 days?"],
+    ["User", "Admins may continue to rely on support or customer success. It might slow onboarding for larger accounts, but we do not have quantified impact."],
+    ["Validate", "Why does this matter to the business or strategy right now?"],
+    ["User", "Enterprise expansion is a priority, and admin usability is becoming more important as accounts get larger."],
+    ["Validate", "What assumptions are you making that are not yet proven?"],
+    ["User", "We are assuming search is the right solution, that AI is better than better navigation, and that admins would trust AI-generated answers for admin tasks."],
+    ["Validate", "What is the smallest test that would increase confidence?"],
+    ["User", "Review support tickets, interview 5 enterprise admins, and prototype a command/search bar with a few common admin tasks."]
+  ]
+}

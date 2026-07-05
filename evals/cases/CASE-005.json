@@ -1,0 +1,48 @@
+{
+  "id": "CASE-005",
+  "title": "AI Strategy Assistant For Founders",
+  "expected": "Validate",
+  "checks": [
+    {
+      "type": "score_min",
+      "score": "potential",
+      "value": 80,
+      "reason": "A core founder strategy assistant should preserve high Potential when upside is plausible."
+    },
+    {
+      "type": "score_max",
+      "score": "confidence",
+      "value": 50,
+      "reason": "Weak evidence, unclear workflow fit, and no willingness-to-pay signal should keep Confidence low."
+    },
+    {
+      "type": "score_min",
+      "score": "decisionDebt",
+      "value": 55,
+      "reason": "High-potential weak-evidence AI strategy ideas should not look low-risk."
+    }
+  ],
+  "transcript": [
+    ["User", "We're considering building an AI strategy assistant for startup founders."],
+    ["Validate", "Let's clarify the decision before we evaluate it. Which best describes what you're trying to decide?"],
+    ["User", "Should we build a feature?"],
+    ["Validate", "What customer or user problem do you believe an AI strategy assistant solves for founders?"],
+    ["User", "Founders struggle to decide what to build, what to prioritize, and whether their product ideas are backed by enough evidence. The reasoning is scattered across docs, calls, customer notes, and metrics."],
+    ["Validate", "What evidence do you have that this problem exists?"],
+    ["User", "Mostly anecdotal evidence. We have talked with 3 founders, and we have felt this problem ourselves while building Validate. We do not have broad research yet."],
+    ["Validate", "Do you have direct customer evidence, behavioral data, paid pilots, or willingness-to-pay evidence?"],
+    ["User", "No paid pilots yet. No usage data yet. We have not tested willingness to pay. A few founders said the concept sounds useful."],
+    ["Validate", "What business or strategic goal would this support?"],
+    ["User", "It could become a core Validate product direction. If founders trust it, it could be a category-defining assistant for product judgment and investment decisions."],
+    ["Validate", "What alternatives do founders use today?"],
+    ["User", "Advisors, ChatGPT, spreadsheets, Notion docs, customer interviews, product consultants, and their own instincts. None of these create a consistent decision record."],
+    ["Validate", "Where would this fit into the founder's workflow?"],
+    ["User", "That is unclear. It might live before roadmap planning, during product discovery, or before investor or team updates. We do not know yet whether founders would use it daily, weekly, or only around major decisions."],
+    ["Validate", "What risks or concerns exist?"],
+    ["User", "The assistant could sound overconfident, give bad strategic advice, hallucinate, or encourage founders to outsource judgment. Founders may not trust AI with high-stakes strategy. Privacy could matter if they share sensitive business context."],
+    ["Validate", "What is the smallest test that would increase confidence?"],
+    ["User", "Interview 10 to 15 founders, run concierge strategy-review sessions using the current Validate framework, ask what they would pay for, and compare the output against their existing decision process."],
+    ["Validate", "What is the estimated build cost?"],
+    ["User", "A rough prototype could be moderate effort because it can start as a guided AI workflow. A trustworthy product would be harder because the reasoning, evals, memory, and decision record would need to be very good."]
+  ]
+}

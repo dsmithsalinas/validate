@@ -1,0 +1,40 @@
+{
+  "id": "CASE-002",
+  "title": "Bulk Invite For Enterprise Admins",
+  "expected": "Build",
+  "checks": [
+    {
+      "type": "score_min",
+      "score": "confidence",
+      "value": 70,
+      "reason": "Strong customer, behavioral, and business evidence should support a high-confidence Build."
+    },
+    {
+      "type": "score_max",
+      "score": "decisionDebt",
+      "value": 40,
+      "reason": "Scoped CSV import with strong evidence should keep Decision Debt low to moderate."
+    }
+  ],
+  "transcript": [
+    ["User", "We're considering building bulk invite and CSV import for enterprise admins."],
+    ["Validate", "Let's clarify the decision before we evaluate it. Which best describes what you're trying to decide?"],
+    ["User", "Should we build a feature?"],
+    ["Validate", "What customer or user problem do you believe bulk invite solves for enterprise admins?"],
+    ["User", "Enterprise admins need to onboard dozens or hundreds of users during rollout. Today they have to invite users one at a time, which is slow and error-prone."],
+    ["Validate", "What evidence do you have that this problem exists?"],
+    ["User", "We interviewed 8 enterprise admins. 7 mentioned bulk onboarding as painful. We also found 43 support tickets in the last quarter related to bulk user setup, invite failures, or admin onboarding workarounds."],
+    ["Validate", "Do you have behavioral data showing this is frequent or painful?"],
+    ["User", "Yes. Analytics show that accounts with more than 50 seats take a median of 9 days to invite 80% of their users. Smaller accounts take 2 days. Admins in larger accounts also revisit the invite screen repeatedly during the first week."],
+    ["Validate", "What is the business impact?"],
+    ["User", "Customer success says this slows enterprise onboarding. Two expansion deals were delayed because the customer wanted easier user provisioning. Sales says lack of bulk invite comes up in late-stage enterprise procurement."],
+    ["Validate", "Why does this matter now?"],
+    ["User", "Enterprise expansion is the company's top priority this quarter, and we have three large pilots starting in the next 60 days."],
+    ["Validate", "What assumptions are still unproven?"],
+    ["User", "We still need to confirm whether CSV import is enough for v1 or whether customers expect SCIM immediately. We also need to test error handling for invalid emails and duplicate users."],
+    ["Validate", "What would a scoped first version look like?"],
+    ["User", "CSV upload with email, name, and role columns. Admins can preview rows, fix errors, and send invites in one batch. No SCIM in v1."],
+    ["Validate", "What is the estimated build cost?"],
+    ["User", "Engineering estimates 2 to 3 weeks for a scoped CSV import with preview, validation, and invite sending."]
+  ]
+}

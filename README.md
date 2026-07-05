@@ -54,6 +54,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 
 Current baseline:
 
+- [Baseline Eval Suite](docs/evals/BASELINE.md)
 - [EVAL-005: Frozen Baseline Eval Suite](docs/evals/EVAL-005-Blind-Model-Run-Customer-Analytics-Rule.md)
 
 Previous evals:
@@ -74,3 +75,11 @@ Previous evals:
 ## Important Note
 
 Any files in `outputs/` or `work/` are scratch artifacts from the recovery process. They are intentionally ignored by Git and are not canonical.
+
+## Useful Commands
+
+Run the frozen baseline eval suite:
+
+```sh
+npm run eval:baseline
+```

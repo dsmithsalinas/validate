@@ -1,0 +1,9 @@
+{
+  "name": "validate",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval:baseline": "node scripts/run-baseline-eval.mjs"
+  }
+}
