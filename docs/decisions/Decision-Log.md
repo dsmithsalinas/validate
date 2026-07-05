@@ -17,6 +17,7 @@ Every meaningful product, architecture, positioning, or workflow decision should
 | D-005 | 2026-07-05 | First audience is startup founders and small product teams. | Market | Draft | 45/100 |
 | D-006 | 2026-07-05 | Build the reasoning engine before optimizing the UI. | Product Architecture | Accepted | 90/100 |
 | D-007 | 2026-07-05 | Validate asks before it answers. | Conversation | Draft | 88/100 |
+| D-008 | 2026-07-05 | Validate recommends the next best investment action. | Decision Engine | Draft | 84/100 |
 
 ## D-001: Validate Evaluates Evidence, Not Ideas
 
@@ -171,3 +172,29 @@ What would change this decision:
 
 - User testing shows founders abandon the flow before receiving value.
 - Strong evidence shows users need a faster lightweight mode before a full evaluation.
+
+## D-008: Validate Recommends The Next Best Investment Action
+
+Status: Draft
+
+Why it matters:
+
+Validate should not simply score ideas or produce documents. It must turn evidence and reasoning into a clear recommendation: Build, Validate, Pause, or Reject.
+
+Evidence:
+
+- RFC-003 defines the four recommendation outcomes.
+- RFC-004 defines when Validate should stop asking questions and recommend.
+- The founding philosophy frames engineering time as an investment decision.
+
+Assumptions:
+
+- The four recommendation outcomes are expressive enough for early users.
+- Users will understand that Validate is not a soft yes and Pause is not the same as Reject.
+- Numeric scores will improve clarity instead of creating false precision.
+
+What would change this decision:
+
+- Manual test cases require additional recommendation types.
+- Users misunderstand score-based recommendations or over-trust the numbers.
+- The MVP needs descriptive ratings before numeric scoring.
