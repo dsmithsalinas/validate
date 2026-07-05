@@ -29,6 +29,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [RFC-003: Reasoning Framework](docs/rfc/RFC-003-Reasoning-Framework.md)
 - [RFC-004: Conversation Framework](docs/rfc/RFC-004-Conversation-Framework.md)
 - [RFC-005: Decision Engine](docs/rfc/RFC-005-Decision-Engine.md)
+- [RFC-006: Investment Model](docs/rfc/RFC-006-Investment-Model.md)
 - [ADR-001: GitHub as Canonical Repository](docs/adr/ADR-001-GitHub-Canonical-Repository.md)
 - [Decision Log](docs/decisions/Decision-Log.md)
 - [Things We Believe Today](docs/beliefs/Things-We-Believe-Today.md)

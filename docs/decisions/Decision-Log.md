@@ -18,6 +18,7 @@ Every meaningful product, architecture, positioning, or workflow decision should
 | D-006 | 2026-07-05 | Build the reasoning engine before optimizing the UI. | Product Architecture | Accepted | 90/100 |
 | D-007 | 2026-07-05 | Validate asks before it answers. | Conversation | Draft | 88/100 |
 | D-008 | 2026-07-05 | Validate recommends the next best investment action. | Decision Engine | Draft | 84/100 |
+| D-009 | 2026-07-05 | Validate keeps investment scores separate and explainable. | Investment Model | Draft | 78/100 |
 
 ## D-001: Validate Evaluates Evidence, Not Ideas
 
@@ -198,3 +199,29 @@ What would change this decision:
 - Manual test cases require additional recommendation types.
 - Users misunderstand score-based recommendations or over-trust the numbers.
 - The MVP needs descriptive ratings before numeric scoring.
+
+## D-009: Validate Keeps Investment Scores Separate And Explainable
+
+Status: Draft
+
+Why it matters:
+
+Validate's scores should clarify judgment without pretending to be more precise than the evidence allows. Investment Score, Confidence, Decision Debt Risk, and Potential must remain separate because they answer different questions.
+
+Evidence:
+
+- RFC-005 established four independent scores.
+- CASE-001 showed the recommendation was useful but score values still felt judgment-based.
+- The founding philosophy requires uncertainty to be visible rather than hidden.
+
+Assumptions:
+
+- A rubric-based scoring model will be easier to trust than opaque math.
+- Users will understand separate scores if each score includes plain-language drivers.
+- Numeric scores plus descriptive bands will be clearer than either format alone.
+
+What would change this decision:
+
+- User testing shows numeric scores create false precision.
+- Manual cases show the model needs fewer or different scoring dimensions.
+- Users prefer qualitative ratings until the scoring model is better validated.
