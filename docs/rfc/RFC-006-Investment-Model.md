@@ -217,6 +217,8 @@ It asks:
 
 > What future cost are we creating if we decide now?
 
+For the canonical definition and interpretation rules, see SPEC-005: Decision Debt Definition.
+
 ### Decision Debt Risk Dimensions
 
 | Dimension | Question |
@@ -227,6 +229,8 @@ It asks:
 | Dependency Risk | Does this create technical, operational, or organizational dependencies? |
 | Opportunity Cost | What higher-value work might be delayed? |
 | Evidence Gap | How weak is the evidence relative to the investment? |
+
+SPEC-005 expands this list to include attention cost, strategy distraction, maintenance burden, trust risk, and policy or compliance review.
 
 ### Decision Debt Risk Rubric
 
@@ -422,4 +426,3 @@ Validate should avoid:
 - Should score bands be 4 levels or 5 levels?
 - Should Confidence caps be strict rules or guidance?
 - Should Decision Debt Risk include estimated engineering hours once users provide them?
-

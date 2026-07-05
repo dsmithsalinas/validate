@@ -41,6 +41,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [SPEC-002: Recommendation Output Template](docs/specs/SPEC-002-Recommendation-Output-Template.md)
 - [SPEC-003: Learning Loop](docs/specs/SPEC-003-Learning-Loop.md)
 - [SPEC-004: Transformational Ideas Rule](docs/specs/SPEC-004-Transformational-Ideas-Rule.md)
+- [SPEC-005: Decision Debt Definition](docs/specs/SPEC-005-Decision-Debt-Definition.md)
 
 ## Manual Test Cases
 
