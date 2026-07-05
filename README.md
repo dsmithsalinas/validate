@@ -31,6 +31,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [RFC-004: Conversation Framework](docs/rfc/RFC-004-Conversation-Framework.md)
 - [RFC-005: Decision Engine](docs/rfc/RFC-005-Decision-Engine.md)
 - [RFC-006: Investment Model](docs/rfc/RFC-006-Investment-Model.md)
+- [RFC-007: Decision Debt Model](docs/rfc/RFC-007-Decision-Debt-Model.md)
 - [ADR-001: GitHub as Canonical Repository](docs/adr/ADR-001-GitHub-Canonical-Repository.md)
 - [Decision Log](docs/decisions/Decision-Log.md)
 - [Things We Believe Today](docs/beliefs/Things-We-Believe-Today.md)
@@ -47,12 +48,14 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 ## Prompts
 
 - [PROMPT-001: Validate System Instructions](docs/prompts/PROMPT-001-Validate-System-Instructions.md)
+- [PROMPT-002: Validate System Instructions](docs/prompts/PROMPT-002-Validate-System-Instructions.md)
 
 ## Evals
 
 - [EVAL-001: Prompt Manual Test](docs/evals/EVAL-001-Prompt-Manual-Test.md)
 - [EVAL-002: Model Run](docs/evals/EVAL-002-Model-Run.md)
 - [EVAL-003: Blind Model Run](docs/evals/EVAL-003-Blind-Model-Run.md)
+- [EVAL-004: Blind Model Run With PROMPT-002](docs/evals/EVAL-004-Blind-Model-Run-Prompt-002.md)
 
 ## Manual Test Cases
 

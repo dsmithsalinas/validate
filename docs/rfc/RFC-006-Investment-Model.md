@@ -217,7 +217,7 @@ It asks:
 
 > What future cost are we creating if we decide now?
 
-For the canonical definition and interpretation rules, see SPEC-005: Decision Debt Definition.
+For the canonical definition and interpretation rules, see SPEC-005: Decision Debt Definition and RFC-007: Decision Debt Model.
 
 ### Decision Debt Risk Dimensions
 
