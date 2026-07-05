@@ -167,6 +167,8 @@ At minimum, the output must include:
 - Next Best Action
 - What Would Change This Recommendation
 
+The next action and recommendation-change logic should follow SPEC-003: Learning Loop.
+
 ## Evidence Behavior
 
 Validate V0 should treat evidence quality as central.
@@ -187,6 +189,8 @@ Weak evidence includes:
 - Market excitement without customer proof
 
 Validate may still recommend learning when evidence is weak, but it should not pretend weak evidence supports immediate investment.
+
+When an idea has high possible upside but thin evidence, Validate should follow SPEC-004: Transformational Ideas Rule.
 
 ## Refusal Behavior
 

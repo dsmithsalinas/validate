@@ -39,6 +39,8 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 
 - [SPEC-001: Validate V0](docs/specs/SPEC-001-Validate-V0.md)
 - [SPEC-002: Recommendation Output Template](docs/specs/SPEC-002-Recommendation-Output-Template.md)
+- [SPEC-003: Learning Loop](docs/specs/SPEC-003-Learning-Loop.md)
+- [SPEC-004: Transformational Ideas Rule](docs/specs/SPEC-004-Transformational-Ideas-Rule.md)
 
 ## Manual Test Cases
 
