@@ -83,3 +83,14 @@ Run the frozen baseline eval suite:
 ```sh
 npm run eval:baseline
 ```
+
+Run the Base44 mockup:
+
+```sh
+cd validate-mockup
+npm run dev
+```
+
+Live Base44 mockup:
+
+[https://validate-mockup-51c4e7bb.base44.app](https://validate-mockup-51c4e7bb.base44.app)

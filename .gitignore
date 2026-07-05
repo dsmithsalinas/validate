@@ -3,3 +3,5 @@
 .env.*
 work/
 outputs/
+validate-mockup/node_modules/
+validate-mockup/dist/
