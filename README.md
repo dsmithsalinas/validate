@@ -34,6 +34,10 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [Things We Believe Today](docs/beliefs/Things-We-Believe-Today.md)
 - [Recovery Sprint](docs/recovery/Recovery-Sprint.md)
 
+## Manual Test Cases
+
+- [CASE-001: AI Search For Enterprise Admins](docs/cases/CASE-001-AI-Search-For-Enterprise-Admins.md)
+
 ## Important Note
 
 Any files in `outputs/` or `work/` are scratch artifacts from the recovery process. They are intentionally ignored by Git and are not canonical.
