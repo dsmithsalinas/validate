@@ -1,11 +1,40 @@
 # EVAL-005: Blind Model Run With Customer-Facing Analytics Rule
 
-Status: Complete
+Status: Frozen Baseline
 Date: 2026-07-05
 Prompt Tested: PROMPT-002-Validate-System-Instructions.md
 Model: gpt-4.1-mini
 Run Type: Blind model run
 Runner: work/run-eval-003.mjs
+
+## Calibration Milestone
+
+PROMPT-002 successfully improved Decision Debt calibration without reducing recommendation accuracy.
+
+This validates two core ideas in the Validate framework:
+
+1. Potential and Confidence must remain separate.
+2. Decision Debt should represent premature-commitment risk, not engineering effort.
+
+Key fixes:
+
+- Customer-facing analytics with inconsistent instrumentation now scores as High Decision Debt.
+- High-potential, weak-evidence ideas now receive Validate rather than Build or Reject.
+- Decision Debt is now treated as premature-commitment risk rather than development cost.
+
+## Baseline Rule
+
+This eval is the frozen baseline eval suite for PROMPT-002.
+
+From this point forward, every prompt change should be compared against EVAL-005 to check for regressions in:
+
+- Recommendation accuracy.
+- Decision Debt calibration.
+- Separation of Potential and Confidence.
+- Moonshot handling for high-potential, weak-evidence ideas.
+- Customer-facing analytics risk handling.
+
+A future prompt should not be considered better unless it preserves or improves the EVAL-005 behavior.
 
 ## Purpose
 
