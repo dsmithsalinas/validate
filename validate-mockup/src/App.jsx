@@ -1,5 +1,13 @@
-import { useMemo, useState } from "react";
-import { ArrowRight, Check, Circle, Loader2, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Circle,
+  Loader2,
+  RotateCcw,
+  Sparkles,
+} from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const decisionTypes = [
@@ -10,55 +18,81 @@ const decisionTypes = [
   "Something else",
 ];
 
-const questionFields = [
+const conversationSteps = [
+  {
+    key: "decisionType",
+    eyebrow: "Decision intent",
+    question: "Which best describes what you are trying to decide?",
+    type: "choice",
+    options: decisionTypes,
+  },
   {
     key: "customerProblem",
-    label: "What customer or user problem does this solve?",
-    placeholder: "Example: Admins struggle to find settings and policy docs in a complex console.",
+    eyebrow: "Customer problem",
+    question: "What customer or user problem does this solve?",
+    placeholder:
+      "Example: Admins struggle to find settings and policy docs in a complex console.",
   },
   {
     key: "evidence",
-    label: "What evidence do you have?",
-    placeholder: "Example: 3 customer success managers mentioned it, but we have not checked support tickets yet.",
+    eyebrow: "Evidence",
+    question: "What evidence do you have?",
+    placeholder:
+      "Example: 3 customer success managers mentioned it, but we have not checked support tickets yet.",
   },
   {
     key: "users",
-    label: "Who is affected, and how often?",
-    placeholder: "Example: Larger enterprise admins, probably during onboarding and account changes.",
+    eyebrow: "Users",
+    question: "Who is affected, and how often?",
+    placeholder:
+      "Example: Larger enterprise admins, probably during onboarding and account changes.",
   },
   {
     key: "businessGoal",
-    label: "Why does this matter to the business now?",
+    eyebrow: "Business goal",
+    question: "Why does this matter to the business now?",
     placeholder: "Example: Enterprise expansion is a priority this quarter.",
   },
   {
     key: "alternatives",
-    label: "What do people use instead today?",
-    placeholder: "Example: Support, customer success, docs, search, or manual workarounds.",
+    eyebrow: "Alternatives",
+    question: "What do people use instead today?",
+    placeholder:
+      "Example: Support, customer success, docs, search, or manual workarounds.",
   },
   {
     key: "risks",
-    label: "What risks or concerns should Validate consider?",
-    placeholder: "Example: Trust, privacy, hallucinations, unreliable data, or roadmap distraction.",
+    eyebrow: "Risks",
+    question: "What risks or concerns should Validate consider?",
+    placeholder:
+      "Example: Trust, privacy, hallucinations, unreliable data, or roadmap distraction.",
   },
   {
     key: "validationTest",
-    label: "What is the smallest test that would increase confidence?",
+    eyebrow: "Smallest test",
+    question: "What is the smallest test that would increase confidence?",
     placeholder: "Example: Interview 5 admins and prototype the top 3 workflows.",
   },
   {
     key: "costOfDelay",
-    label: "What happens if you wait 30 to 90 days?",
+    eyebrow: "Cost of delay",
+    question: "What happens if you wait 30 to 90 days?",
     placeholder: "Example: Support load may continue, but no known deals are blocked.",
   },
 ];
 
+const firstAnswerStepIndex = 1;
+const storageKey = "validate:last-decision";
+
 export default function App() {
   const [idea, setIdea] = useState("");
   const [started, setStarted] = useState(false);
+  const [stepIndex, setStepIndex] = useState(0);
   const [decisionType, setDecisionType] = useState(decisionTypes[0]);
   const [answers, setAnswers] = useState({});
+  const [draftAnswer, setDraftAnswer] = useState("");
   const [decision, setDecision] = useState(null);
+  const [lastDecision, setLastDecision] = useState(null);
   const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState("");
 
@@ -66,15 +100,78 @@ export default function App() {
     return idea.trim() || "We're considering building AI search for enterprise admins.";
   }, [idea]);
 
+  const currentStep = conversationSteps[stepIndex];
+  const answeredCount = conversationSteps.filter((step) => {
+    if (step.key === "decisionType") return Boolean(decisionType);
+    return Boolean((answers[step.key] || "").trim());
+  }).length;
+  const isLastStep = stepIndex === conversationSteps.length - 1;
+  const hasEnoughForDecision = answeredCount >= 6;
+
+  useEffect(() => {
+    const savedDecision = window.localStorage.getItem(storageKey);
+    if (!savedDecision) return;
+
+    try {
+      setLastDecision(JSON.parse(savedDecision));
+    } catch {
+      window.localStorage.removeItem(storageKey);
+    }
+  }, []);
+
   const startConversation = (event) => {
     event.preventDefault();
     setStarted(true);
+    setStepIndex(0);
     setDecision(null);
+    setError("");
+    setDraftAnswer("");
+  };
+
+  const selectDecisionType = (type) => {
+    setDecisionType(type);
     setError("");
   };
 
-  const updateAnswer = (key, value) => {
-    setAnswers((current) => ({ ...current, [key]: value }));
+  const updateAnswer = (value) => {
+    setDraftAnswer(value);
+    setAnswers((current) => ({ ...current, [currentStep.key]: value }));
+    setError("");
+  };
+
+  const goToStep = (nextIndex) => {
+    const nextStep = conversationSteps[nextIndex];
+    setStepIndex(nextIndex);
+    setDraftAnswer(nextStep.key === "decisionType" ? "" : answers[nextStep.key] || "");
+    setError("");
+  };
+
+  const goForward = () => {
+    if (currentStep.type !== "choice" && !draftAnswer.trim()) {
+      setError("Validate needs your best current answer before moving on.");
+      return;
+    }
+
+    if (!isLastStep) {
+      goToStep(stepIndex + 1);
+    }
+  };
+
+  const goBack = () => {
+    if (stepIndex > 0) {
+      goToStep(stepIndex - 1);
+    }
+  };
+
+  const resetConversation = () => {
+    setIdea("");
+    setStarted(false);
+    setStepIndex(0);
+    setDecisionType(decisionTypes[0]);
+    setAnswers({});
+    setDraftAnswer("");
+    setDecision(null);
+    setError("");
   };
 
   const makeDecision = async () => {
@@ -93,7 +190,15 @@ export default function App() {
         throw new Error(result?.error || "Validate could not produce a recommendation.");
       }
 
+      const completedDecision = {
+        idea: displayIdea,
+        decidedAt: new Date().toISOString(),
+        decision: result.decision,
+      };
+
       setDecision(result.decision);
+      setLastDecision(completedDecision);
+      window.localStorage.setItem(storageKey, JSON.stringify(completedDecision));
     } catch (caughtError) {
       setError(caughtError?.message || "Something went wrong while asking Validate.");
     } finally {
@@ -136,26 +241,44 @@ export default function App() {
 
           {started && (
             <div className="mt-5 border-t border-neutral-200 px-2 pb-1 pt-5 text-left">
-              <div className="mb-5">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
-                  Current idea
-                </p>
-                <p className="mt-2 text-lg font-medium text-black">{displayIdea}</p>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                    Current idea
+                  </p>
+                  <p className="mt-2 text-lg font-medium text-black">{displayIdea}</p>
+                </div>
+                <div className="rounded-full border border-neutral-200 px-4 py-2 text-sm text-neutral-600">
+                  {answeredCount}/{conversationSteps.length}
+                </div>
               </div>
 
-              <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
-                <div>
-                  <p className="text-sm font-medium text-black">
-                    Which best describes what you are trying to decide?
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    {decisionTypes.map((type) => {
+              <div className="mt-6">
+                <div className="h-1.5 overflow-hidden rounded-full bg-neutral-100">
+                  <div
+                    className="h-full rounded-full bg-black transition-all duration-300"
+                    style={{ width: `${(answeredCount / conversationSteps.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-7">
+                <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                  {currentStep.eyebrow}
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold leading-tight text-black">
+                  {currentStep.question}
+                </h2>
+
+                {currentStep.type === "choice" ? (
+                  <div className="mt-5 space-y-2">
+                    {currentStep.options.map((type) => {
                       const selected = type === decisionType;
                       return (
                         <button
                           key={type}
                           type="button"
-                          onClick={() => setDecisionType(type)}
+                          onClick={() => selectDecisionType(type)}
                           className="flex w-full items-center gap-3 rounded-full border border-neutral-200 px-4 py-3 text-left text-sm transition hover:border-black"
                         >
                           {selected ? (
@@ -170,86 +293,153 @@ export default function App() {
                       );
                     })}
                   </div>
-                </div>
+                ) : (
+                  <textarea
+                    value={draftAnswer}
+                    onChange={(event) => updateAnswer(event.target.value)}
+                    placeholder={currentStep.placeholder}
+                    className="mt-5 min-h-36 w-full resize-none rounded-[1.5rem] border border-neutral-200 bg-white p-4 text-base leading-7 text-black outline-none placeholder:text-neutral-400 focus:border-black"
+                  />
+                )}
 
-                <div>
-                  <p className="text-sm font-medium text-black">
-                    Answer what you know. It is okay if some evidence is weak.
-                  </p>
-                  <div className="mt-3 space-y-4">
-                    {questionFields.map((field) => (
-                      <label key={field.key} className="block">
-                        <span className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-500">
-                          {field.label}
-                        </span>
-                        <textarea
-                          value={answers[field.key] || ""}
-                          onChange={(event) => updateAnswer(field.key, event.target.value)}
-                          placeholder={field.placeholder}
-                          className="mt-2 min-h-20 w-full resize-none rounded-3xl border border-neutral-200 bg-white p-4 text-sm leading-6 text-black outline-none placeholder:text-neutral-400 focus:border-black"
-                        />
-                      </label>
-                    ))}
+                {error && <p className="mt-3 text-sm leading-6 text-red-600">{error}</p>}
+
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      disabled={stepIndex === 0}
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-black transition hover:border-black disabled:cursor-not-allowed disabled:text-neutral-300"
+                      aria-label="Previous question"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetConversation}
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-black transition hover:border-black"
+                      aria-label="Reset conversation"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={makeDecision}
-                    disabled={isThinking}
-                    className="mt-3 inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800"
-                  >
-                    {isThinking ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Sparkles className="h-4 w-4" />
+
+                  <div className="flex items-center gap-2">
+                    {!isLastStep && (
+                      <button
+                        type="button"
+                        onClick={goForward}
+                        className="inline-flex h-11 items-center gap-2 rounded-full border border-black px-5 text-sm font-medium text-black transition hover:bg-neutral-50"
+                      >
+                        Next
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
                     )}
-                    {isThinking ? "Thinking..." : "Make recommendation"}
-                  </button>
-                  {error && <p className="mt-3 text-sm leading-6 text-red-600">{error}</p>}
+                    <button
+                      type="button"
+                      onClick={makeDecision}
+                      disabled={isThinking || !hasEnoughForDecision}
+                      className="inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                    >
+                      {isThinking ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Sparkles className="h-4 w-4" />
+                      )}
+                      {isThinking ? "Thinking..." : "Recommend"}
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              {answeredCount > firstAnswerStepIndex && (
+                <div className="mt-7 border-t border-neutral-200 pt-5">
+                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+                    Captured so far
+                  </p>
+                  <div className="mt-3 space-y-3">
+                    {conversationSteps.slice(firstAnswerStepIndex).map((step) => {
+                      const value = answers[step.key];
+                      if (!value?.trim()) return null;
+                      return (
+                        <button
+                          key={step.key}
+                          type="button"
+                          onClick={() => goToStep(conversationSteps.findIndex((item) => item.key === step.key))}
+                          className="block w-full border-t border-neutral-100 pt-3 text-left"
+                        >
+                          <span className="text-xs font-medium uppercase tracking-[0.12em] text-neutral-400">
+                            {step.eyebrow}
+                          </span>
+                          <span className="mt-1 block text-sm leading-6 text-neutral-700">{value}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {decision && (
-          <section className="mt-6 w-full max-w-3xl border-t border-black pt-6 text-left">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
-                  Recommendation
-                </p>
-                <h2 className="mt-2 text-3xl font-semibold text-black">{decision.recommendation}</h2>
-              </div>
-              <div className="rounded-full border border-black px-4 py-2 text-sm font-medium">
-                Confidence {decision.confidence}
-              </div>
-            </div>
+        {decision && <DecisionCard decision={decision} />}
 
-            <p className="mt-5 max-w-2xl text-base leading-7 text-neutral-700">{decision.summary}</p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <Metric label="Investment" value={decision.investment} />
-              <Metric label="Decision Debt" value={decision.decisionDebt} />
-              <Metric label="Potential" value={decision.potential} />
-            </div>
-
-            <div className="mt-7 grid gap-6 md:grid-cols-2">
-              <EvidenceList title="Strongest Evidence" items={decision.strongestEvidence} />
-              <EvidenceList title="Evidence Gaps" items={decision.evidenceGaps} />
-              <EvidenceList title="Key Assumptions" items={decision.keyAssumptions} />
-              <EvidenceList title="Decision Risks" items={decision.decisionRisks} />
-            </div>
-
-            <div className="mt-7 border-t border-neutral-200 pt-5">
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
-                Next Best Action
-              </p>
-              <p className="mt-2 text-base leading-7 text-black">{decision.nextBestAction}</p>
+        {!decision && lastDecision && (
+          <section className="mt-6 w-full max-w-3xl border-t border-neutral-200 pt-5 text-left">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+              Last decision
+            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+              <p className="max-w-xl text-sm leading-6 text-neutral-700">{lastDecision.idea}</p>
+              <span className="rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium">
+                {lastDecision.decision.recommendation}
+              </span>
             </div>
           </section>
         )}
       </section>
     </main>
+  );
+}
+
+function DecisionCard({ decision }) {
+  return (
+    <section className="mt-6 w-full max-w-3xl border-t border-black pt-6 text-left">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+            Recommendation
+          </p>
+          <h2 className="mt-2 text-3xl font-semibold text-black">{decision.recommendation}</h2>
+        </div>
+        <div className="rounded-full border border-black px-4 py-2 text-sm font-medium">
+          Confidence {decision.confidence}
+        </div>
+      </div>
+
+      <p className="mt-5 max-w-2xl text-base leading-7 text-neutral-700">{decision.summary}</p>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <Metric label="Investment" value={decision.investment} />
+        <Metric label="Decision Debt" value={decision.decisionDebt} />
+        <Metric label="Potential" value={decision.potential} />
+      </div>
+
+      <div className="mt-7 grid gap-6 md:grid-cols-2">
+        <EvidenceList title="Strongest Evidence" items={decision.strongestEvidence} />
+        <EvidenceList title="Evidence Gaps" items={decision.evidenceGaps} />
+        <EvidenceList title="Key Assumptions" items={decision.keyAssumptions} />
+        <EvidenceList title="Decision Risks" items={decision.decisionRisks} />
+      </div>
+
+      <div className="mt-7 border-t border-neutral-200 pt-5">
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-500">
+          Next Best Action
+        </p>
+        <p className="mt-2 text-base leading-7 text-black">{decision.nextBestAction}</p>
+      </div>
+    </section>
   );
 }
 
