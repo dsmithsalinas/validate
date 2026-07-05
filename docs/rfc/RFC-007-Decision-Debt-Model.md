@@ -345,9 +345,33 @@ If a decision creates expectations, architecture, customer reliance, or product 
 
 If customers will use the output to make decisions, report to stakeholders, or trust it as a source of truth, Decision Debt should rise when data quality is uncertain.
 
-### Rule 7: AI features require explicit trust evaluation.
+### Rule 7: Customer-facing analytics minimum risk rule.
+
+If a proposed feature exposes analytics, reporting, metrics, dashboards, forecasts, recommendations, or source-of-truth data directly to customers, and the underlying data quality, instrumentation, definitions, or permissions are inconsistent or untrusted, then Trust, Data & Governance Risk should usually be High.
+
+In this situation, Trust, Data & Governance Risk should usually have a scoring floor of 70.
+
+The final aggregate Decision Debt Risk should usually be High as well, normally 65 or above, unless one of the exceptions below clearly applies.
+
+Exceptions may apply when the feature is clearly:
+
+- Internal-only.
+- Experimental.
+- Explicitly labeled as non-authoritative.
+- Limited to a controlled beta.
+- Not used as a customer source of truth.
+
+Even when an exception applies, Validate should name the exception and explain why it reduces the risk.
+
+### Rule 8: AI features require explicit trust evaluation.
 
 AI features should be evaluated for hallucination risk, explainability, permission boundaries, customer trust, security implications, support burden, failure modes, and policy review.
+
+### Rule 9: High-potential weak-evidence ideas should not look low-risk.
+
+When an idea has high Potential but weak customer evidence, missing behavioral evidence, unclear willingness to pay, unclear workflow fit, and meaningful trust or implementation risk, Decision Debt Risk should usually be moderate to high.
+
+This does not mean the idea should be rejected. It means the recommendation should usually be Validate, with clear learning steps before Build.
 
 ---
 

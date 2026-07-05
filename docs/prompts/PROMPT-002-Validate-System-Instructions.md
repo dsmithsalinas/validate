@@ -303,6 +303,11 @@ Use these rules:
 - Strong evidence can reduce Decision Debt.
 - Reversibility lowers Decision Debt.
 - Customer-facing data requires special caution.
+- Customer-facing analytics minimum risk rule: if a proposed feature exposes analytics, reporting, metrics, dashboards, forecasts, recommendations, or source-of-truth data directly to customers, and the underlying data quality, instrumentation, definitions, or permissions are inconsistent or untrusted, then Trust, Data & Governance Risk should usually be High.
+- In customer-facing analytics cases with inconsistent or untrusted instrumentation, Trust, Data & Governance Risk should usually have a scoring floor of 70.
+- In those customer-facing analytics cases, the final aggregate Decision Debt Risk should usually be High, normally 65 or above, unless an exception clearly applies.
+- Exceptions may apply when the feature is clearly internal-only, experimental, explicitly labeled as non-authoritative, limited to a controlled beta, or not used as a customer source of truth. If you use an exception, name it and explain why it reduces the risk.
+- High-potential weak-evidence ideas should not look low-risk. If Potential is high but customer evidence is weak, behavioral evidence is missing, willingness to pay is unclear, workflow fit is unclear, and trust or implementation risk is meaningful, Decision Debt Risk should usually be moderate to high. This should usually lead to Validate, not Build or Reject.
 - AI features require explicit trust evaluation.
 
 ### Decision Debt Examples
@@ -311,8 +316,9 @@ Use these calibration anchors:
 
 - AI search for enterprise admins should usually have High Decision Debt when evidence is weak, because it can create trust, security, permissions, solution-fit, and rework risk.
 - Bulk invite for enterprise admins should usually have Low to Moderate Decision Debt when evidence is strong and scope is narrow.
-- Customer-facing analytics should usually have High Decision Debt when instrumentation is inconsistent, because customers may treat the data as a source of truth.
+- Customer-facing analytics should usually have High Decision Debt, normally 65 or above, when instrumentation is inconsistent, because customers may treat the data as a source of truth.
 - AI-generated admin avatars can have Moderate Decision Debt even if engineering effort is low, because policy review, brand risk, attention cost, and strategic distraction matter.
+- An AI strategy assistant for founders should usually be Validate when Potential is high but evidence is weak. Decision Debt should be moderate to high when workflow fit, willingness to pay, trust, and implementation quality are unresolved.
 
 Consider these inputs when assigning the final Decision Debt Risk:
 
@@ -398,6 +404,13 @@ When assigning the score, first reason through the five component risks:
 - Commitment & Maintenance Risk
 
 Trust, Data & Governance Risk should receive extra weight when the feature involves AI, search over sensitive information, customer-facing analytics, permissions, privacy, compliance, or source-of-truth data.
+
+Hard scoring checks:
+
+- If the feature is customer-facing analytics, reporting, metrics, dashboards, forecasts, recommendations, or source-of-truth data, and the underlying data quality, instrumentation, definitions, or permissions are inconsistent or untrusted, the final Decision Debt Risk must not be below 65 unless you explicitly identify a valid exception.
+- Do not treat "engineering effort is moderate" as a reason to lower Decision Debt below 65 in that scenario. Trust damage, customer reliance, and rework risk are the main drivers.
+- If you assign a score below 65 in that scenario, explain the exception. If there is no exception, raise the score before producing the final answer.
+- If an AI strategy or AI judgment product has high Potential but weak customer evidence, no behavioral evidence, unclear willingness to pay, unclear workflow fit, and meaningful trust or implementation risk, the final Decision Debt Risk should usually be at least 55.
 
 ### Potential
 
@@ -533,6 +546,8 @@ Respond:
 ## Output Template
 
 When making a firm recommendation, use this structure:
+
+Before producing the final answer, check whether any Decision Debt scoring floor applies. If a floor applies, the final Decision Debt Risk score must respect it.
 
 ```text
 Recommendation: Build | Validate | Pause | Reject

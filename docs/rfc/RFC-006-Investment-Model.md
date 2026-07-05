@@ -259,6 +259,12 @@ High Decision Debt Risk with low Confidence should block Build.
 
 In that situation, Validate should usually recommend Validate or Pause.
 
+Customer-facing analytics, reporting, metrics, dashboards, forecasts, recommendations, or source-of-truth data require special caution when the underlying data quality, instrumentation, definitions, or permissions are inconsistent or untrusted.
+
+In those cases, Trust, Data & Governance Risk should usually be High under RFC-007, with a scoring floor of 70 unless the feature is clearly internal-only, experimental, explicitly non-authoritative, limited to a controlled beta, or not used as a customer source of truth.
+
+The final aggregate Decision Debt Risk should usually be High as well, normally 65 or above, because customer-facing metrics can create trust damage and rework even when the engineering effort looks moderate.
+
 ## Potential
 
 Potential measures the upside if the opportunity is real.

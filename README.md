@@ -56,6 +56,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [EVAL-002: Model Run](docs/evals/EVAL-002-Model-Run.md)
 - [EVAL-003: Blind Model Run](docs/evals/EVAL-003-Blind-Model-Run.md)
 - [EVAL-004: Blind Model Run With PROMPT-002](docs/evals/EVAL-004-Blind-Model-Run-Prompt-002.md)
+- [EVAL-005: Blind Model Run With Customer-Facing Analytics Rule](docs/evals/EVAL-005-Blind-Model-Run-Customer-Analytics-Rule.md)
 
 ## Manual Test Cases
 
@@ -63,6 +64,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [CASE-002: Bulk Invite For Enterprise Admins](docs/cases/CASE-002-Bulk-Invite-For-Enterprise-Admins.md)
 - [CASE-003: Customer Analytics Dashboard](docs/cases/CASE-003-Customer-Analytics-Dashboard.md)
 - [CASE-004: AI-Generated Admin Avatars](docs/cases/CASE-004-AI-Generated-Admin-Avatars.md)
+- [CASE-005: AI Strategy Assistant For Founders](docs/cases/CASE-005-AI-Strategy-Assistant-For-Founders.md)
 
 ## Important Note
 
