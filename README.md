@@ -38,6 +38,7 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 ## Product Specs
 
 - [SPEC-001: Validate V0](docs/specs/SPEC-001-Validate-V0.md)
+- [SPEC-002: Recommendation Output Template](docs/specs/SPEC-002-Recommendation-Output-Template.md)
 
 ## Manual Test Cases
 

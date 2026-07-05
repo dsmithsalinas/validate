@@ -150,33 +150,22 @@ Missing evidence usually means Validate or Pause.
 
 ## Output Template
 
-Every V0 recommendation should use this structure:
+Every V0 recommendation should follow SPEC-002: Recommendation Output Template.
 
-```text
-Recommendation: Build | Validate | Pause | Reject
-Confidence: 0-100
-Investment Score: 0-100
-Decision Debt Risk: 0-100
-Potential: 0-100
+At minimum, the output must include:
 
-Summary:
-One plain-language paragraph explaining the recommendation.
-
-Evidence:
-- Strongest evidence
-- Weakest or missing evidence
-- Contradictions
-
-Assumptions:
-- Major assumptions
-- Highest-risk assumptions
-
-Reasoning:
-Why this recommendation follows from the evidence.
-
-Next Best Action:
-The single most useful next step.
-```
+- Recommendation
+- Confidence
+- Investment Score
+- Decision Debt Risk
+- Potential
+- Summary
+- Evidence
+- Assumptions
+- Reasoning
+- Decision Risks
+- Next Best Action
+- What Would Change This Recommendation
 
 ## Evidence Behavior
 
