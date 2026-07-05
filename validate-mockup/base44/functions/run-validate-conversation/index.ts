@@ -16,6 +16,12 @@ Conversation behavior:
 - Adapt the next question to the user's actual answer.
 - Ask follow-up questions when answers are vague, weak, biased, or missing customer evidence.
 - Sound calm, direct, and product-minded.
+- Always respond in clear English only.
+- Never switch languages unless the user explicitly asks to translate.
+- Never repeat the same phrase or question.
+- Keep questions under 35 words.
+- Keep pushback under 45 words.
+- Keep readiness under 35 words.
 - Do not say "great idea."
 - Do not recommend Build unless evidence is strong enough.
 - Do not recommend Reject just because an idea is early if it has plausible high potential and learnable assumptions.
@@ -179,6 +185,74 @@ function normalizeArray(value: unknown) {
   return value.map(cleanText).filter(Boolean);
 }
 
+function hasNonEnglishCharacters(value: string) {
+  return /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af\u0400-\u04ff\u0590-\u05ff\u0600-\u06ff]/u.test(
+    value,
+  );
+}
+
+function hasRepeatedPhrase(value: string) {
+  const normalized = value.toLowerCase().replace(/\s+/g, " ").trim();
+  if (!normalized) return false;
+
+  const words = normalized.split(" ");
+  for (let phraseLength = 3; phraseLength <= 8; phraseLength += 1) {
+    const seen = new Map<string, number>();
+    for (let index = 0; index <= words.length - phraseLength; index += 1) {
+      const phrase = words.slice(index, index + phraseLength).join(" ");
+      const count = (seen.get(phrase) || 0) + 1;
+      if (count >= 3) return true;
+      seen.set(phrase, count);
+    }
+  }
+
+  return false;
+}
+
+function isMalformedText(value: string, maxLength = 700) {
+  if (!value) return false;
+  return value.length > maxLength || hasNonEnglishCharacters(value) || hasRepeatedPhrase(value);
+}
+
+function isMalformedArray(values: string[]) {
+  return values.some((value) => isMalformedText(value, 350));
+}
+
+function fallbackQuestion(messages: Message[]) {
+  const userAnswerCount = messages.filter((message) => message.role === "user").length;
+
+  if (userAnswerCount <= 1) {
+    return "What specific customer problem are you trying to solve?";
+  }
+
+  if (userAnswerCount === 2) {
+    return "What evidence do you have that this problem is real and important?";
+  }
+
+  if (userAnswerCount === 3) {
+    return "Who is affected by this problem, and how often does it happen?";
+  }
+
+  if (userAnswerCount === 4) {
+    return "What business outcome would improve if this worked?";
+  }
+
+  return "What is the smallest test that would reduce the biggest uncertainty?";
+}
+
+function safeQuestionConversation(messages: Message[], readiness?: string) {
+  return {
+    mode: "question",
+    question: fallbackQuestion(messages),
+    pushback: "",
+    readiness:
+      readiness ||
+      "Validate needs cleaner evidence before it can make a responsible recommendation.",
+    missingEvidence: ["customer evidence", "business impact", "risks"],
+    decision: null,
+  };
+}
+
 function normalizeConversation(result: Record<string, unknown>) {
   const mode = result.mode === "decision" ? "decision" : "question";
 
@@ -186,7 +260,11 @@ function normalizeConversation(result: Record<string, unknown>) {
     mode,
     question: mode === "question" ? cleanText(result.question) : "",
     pushback: mode === "question" ? cleanText(result.pushback) : "",
-    readiness: cleanText(result.readiness),
+    readiness:
+      cleanText(result.readiness) ||
+      (mode === "question"
+        ? "Validate needs more evidence before it can recommend responsibly."
+        : "Validate has enough evidence to make a recommendation."),
     missingEvidence: normalizeArray(result.missingEvidence),
     decision:
       mode === "decision"
@@ -205,6 +283,38 @@ function normalizeConversation(result: Record<string, unknown>) {
           }
         : null,
   };
+}
+
+function guardConversation(conversation: ReturnType<typeof normalizeConversation>, messages: Message[]) {
+  if (
+    conversation.mode === "question" &&
+    (isMalformedText(conversation.question, 220) ||
+      isMalformedText(conversation.pushback, 350) ||
+      isMalformedText(conversation.readiness, 300) ||
+      isMalformedArray(conversation.missingEvidence))
+  ) {
+    return safeQuestionConversation(messages);
+  }
+
+  if (conversation.mode === "decision" && conversation.decision) {
+    const decision = conversation.decision;
+    const malformedDecision =
+      isMalformedText(decision.summary, 1200) ||
+      isMalformedText(decision.nextBestAction, 700) ||
+      isMalformedArray(decision.strongestEvidence) ||
+      isMalformedArray(decision.evidenceGaps) ||
+      isMalformedArray(decision.keyAssumptions) ||
+      isMalformedArray(decision.decisionRisks);
+
+    if (malformedDecision) {
+      return safeQuestionConversation(
+        messages,
+        "Validate detected unstable output and needs one more clean answer before recommending.",
+      );
+    }
+  }
+
+  return conversation;
 }
 
 Deno.serve(async (req) => {
@@ -264,10 +374,11 @@ Return mode "decision" only if Validate has enough evidence and reasoning to rec
       prompt: `${conversationSystemPrompt}\n\n${userPrompt}`,
       response_json_schema: responseSchema,
     });
+    const conversation = guardConversation(normalizeConversation(result), messages);
 
     return Response.json({
       success: true,
-      conversation: normalizeConversation(result),
+      conversation,
     });
   } catch (error) {
     return Response.json(
