@@ -56,6 +56,7 @@ Current baseline:
 
 - [Baseline Eval Suite](docs/evals/BASELINE.md)
 - [EVAL-005: Frozen Baseline Eval Suite](docs/evals/EVAL-005-Blind-Model-Run-Customer-Analytics-Rule.md)
+- [EVAL-007: Live Base44 Calibration](docs/evals/EVAL-007-Live-Base44-Calibration.md)
 
 Previous evals:
 

@@ -21,9 +21,23 @@ Recommendation meanings:
 - Pause: timing, strategy, or context is not ready; revisit later.
 - Reject: evidence suggests the opportunity is not worth investing in.
 
+Investment Score calibration:
+- Low customer value plus poor strategic fit should keep Investment Score low.
+- Novelty, polish, personalization, or internal excitement should not raise Investment Score unless tied to customer pain, adoption, retention, revenue, support reduction, or a clear strategy.
+- If customers have not asked for it, business impact is unproven, higher-priority customer problems are known, and waiting 30 to 90 days has little cost, Investment Score should usually be 35 or lower.
+
+Build calibration:
+- Build does not mean all uncertainty is gone.
+- Build can mean building a narrow, reversible, well-scoped v1.
+- If customer evidence, behavioral evidence, and business evidence are strong, the problem is clear, the proposed v1 scope is narrow, timing is important, and Decision Debt is low to moderate, recommend Build.
+- Do not downgrade Build to Validate just because implementation details still need testing.
+- CSV import vs. SCIM, error handling, validation states, duplicate handling, and similar v1 implementation details can be handled inside a scoped Build recommendation when the core problem and business need are already well supported.
+- Validate is better when the problem, customer pain, solution direction, willingness to use, or business value is still meaningfully uncertain.
+
 Decision Debt calibration:
 - Trust risk can make Decision Debt high even when engineering effort is moderate.
 - Customer-facing analytics, reporting, metrics, dashboards, forecasts, recommendations, or source-of-truth data built on inconsistent or untrusted data should usually have High Decision Debt.
+- AI search over enterprise admin workflows should usually have High Decision Debt when evidence is weak, because it can create permissions, trust, security, solution-fit, and rework risk.
 - High-potential weak-evidence AI strategy ideas should not look low-risk.
 - Small work can still create moderate Decision Debt if it creates policy, trust, maintenance, support, or strategic distraction.
 
