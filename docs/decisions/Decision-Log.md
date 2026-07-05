@@ -16,6 +16,7 @@ Every meaningful product, architecture, positioning, or workflow decision should
 | D-004 | 2026-07-05 | Use GitHub as Validate's canonical repository. | Architecture | Accepted | 96/100 |
 | D-005 | 2026-07-05 | First audience is startup founders and small product teams. | Market | Draft | 45/100 |
 | D-006 | 2026-07-05 | Build the reasoning engine before optimizing the UI. | Product Architecture | Accepted | 90/100 |
+| D-007 | 2026-07-05 | Validate asks before it answers. | Conversation | Draft | 88/100 |
 
 ## D-001: Validate Evaluates Evidence, Not Ideas
 
@@ -147,3 +148,26 @@ What would change this decision:
 
 - User testing shows the reasoning cannot be meaningfully evaluated without a more complete interface.
 
+## D-007: Validate Asks Before It Answers
+
+Status: Draft
+
+Why it matters:
+
+Validate's first interface is the conversation. If it answers too quickly, it becomes a generic AI assistant that produces product-flavored output instead of improving investment decisions.
+
+Evidence:
+
+- The founding framework says Validate should ask questions before recommendations.
+- Dustin defined the opening question as: "What product decision are you trying to make today?"
+- Dustin set the expected question range as at least 5, normally 6 to 10, and no more than 20.
+
+Assumptions:
+
+- Users will tolerate a questioning flow because it increases decision quality.
+- Adaptive skepticism will feel useful instead of obstructive.
+
+What would change this decision:
+
+- User testing shows founders abandon the flow before receiving value.
+- Strong evidence shows users need a faster lightweight mode before a full evaluation.
