@@ -1,0 +1,149 @@
+# Decision Log
+
+Status: Canonical
+Version: 1.0
+Last Updated: 2026-07-05
+
+The Decision Log is Validate's memory.
+
+Every meaningful product, architecture, positioning, or workflow decision should be recorded with evidence, confidence, assumptions, and review criteria.
+
+| ID | Date | Decision | Type | Status | Confidence |
+| --- | --- | --- | --- | --- | --- |
+| D-001 | 2026-07-05 | Validate evaluates evidence, not ideas. | Principle | Canonical | 99/100 |
+| D-002 | 2026-07-05 | Separate Investment Score from Confidence. | Product | Canonical | 97/100 |
+| D-003 | 2026-07-05 | Validate improves product judgment, not document generation. | Product | Canonical | 98/100 |
+| D-004 | 2026-07-05 | Use GitHub as Validate's canonical repository. | Architecture | Accepted | 96/100 |
+| D-005 | 2026-07-05 | First audience is startup founders and small product teams. | Market | Draft | 45/100 |
+| D-006 | 2026-07-05 | Build the reasoning engine before optimizing the UI. | Product Architecture | Accepted | 90/100 |
+
+## D-001: Validate Evaluates Evidence, Not Ideas
+
+Status: Canonical
+
+Why it matters:
+
+This single decision differentiates Validate from document-generation AI tools. Every future feature should reinforce this principle.
+
+Evidence:
+
+- The strongest founding insight was the shift from PRD generation to product investment reasoning.
+- Evidence-first reasoning explains why Validate asks questions, can disagree with users, and sometimes refuses to recommend building.
+
+Assumptions:
+
+- Users will value evidence-based challenge more than agreeable output.
+
+What would change this decision:
+
+- Strong evidence that the target user primarily wants artifact generation rather than decision support.
+
+## D-002: Separate Investment Score From Confidence
+
+Status: Canonical
+
+Why it matters:
+
+Opportunity attractiveness and certainty are different concepts.
+
+An idea can have high potential and low confidence. Another can have low potential and high confidence. Validate must communicate both independently.
+
+Evidence:
+
+- The founding conversation repeatedly identified this as a key differentiator.
+- The matrix of Investment Score and Confidence creates more honest recommendations than a single score.
+
+Assumptions:
+
+- Users will understand and value the distinction.
+
+What would change this decision:
+
+- User testing shows the distinction confuses users or reduces decision quality.
+
+## D-003: Validate Improves Product Judgment, Not Document Generation
+
+Status: Canonical
+
+Why it matters:
+
+PRDs, user stories, roadmaps, and rollout plans are outputs. Better decisions are the product.
+
+Evidence:
+
+- The product became stronger when it moved away from "AI PRD generator" and toward "investment reasoning engine."
+- This principle helps prevent product drift.
+
+Assumptions:
+
+- The market has enough pain around deciding what to build, not just documenting what to build.
+
+What would change this decision:
+
+- Customer discovery shows the strongest value is artifact production, with decision support as a secondary need.
+
+## D-004: Use GitHub As Canonical Repository
+
+Status: Accepted
+
+Why it matters:
+
+Validate needs a durable source of truth that Codex can read, edit, version, and publish reliably.
+
+Evidence:
+
+- Notion was considered and tested, but the AI editing workflow was inconsistent.
+- GitHub supports Markdown, version history, commits, pull requests, issues, and code.
+
+Assumptions:
+
+- GitHub will remain accessible from Codex.
+- Markdown is sufficient for early canonical documentation.
+
+What would change this decision:
+
+- GitHub write workflow fails repeatedly.
+- A better source-of-truth workflow becomes reliable every session.
+
+## D-005: First Audience Is Startup Founders And Small Product Teams
+
+Status: Draft
+
+Why it matters:
+
+Validate needs a focused first user.
+
+Evidence:
+
+- Dustin selected startup founders as the initial audience in the founding conversation.
+
+Assumptions:
+
+- Founders feel acute pain around whether something is worth building.
+- Small teams lack experienced product leadership.
+
+What would change this decision:
+
+- Interviews show stronger demand from enterprise PMs, product ops teams, VCs, or internal platform teams.
+
+## D-006: Build The Reasoning Engine Before Optimizing The UI
+
+Status: Accepted
+
+Why it matters:
+
+The product is the reasoning engine. The UI is only one interface.
+
+Evidence:
+
+- The founding conversation established that Validate may eventually run as a web app, API, or enterprise AI skill.
+- A UI-first build risks recreating Product Strategy Copilot instead of Validate.
+
+Assumptions:
+
+- The reasoning framework can be tested before a polished app exists.
+
+What would change this decision:
+
+- User testing shows the reasoning cannot be meaningfully evaluated without a more complete interface.
+
