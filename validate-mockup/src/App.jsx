@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Circle, Loader2, RotateCcw, Send, Sparkles } from "lucide-react";
+import { ValidateLogo } from "@/components/ValidateLogo";
 
 const decisionTypes = [
   "Should we build a feature?",
@@ -129,9 +130,9 @@ export default function App() {
     <main className="min-h-screen bg-white text-black">
       <section className="mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-5 py-10">
         <div className="w-full text-center">
-          <p className="mb-5 text-sm font-medium uppercase tracking-[0.18em] text-neutral-500">
-            Validate
-          </p>
+          <div className="mb-5 flex justify-center">
+            <ValidateLogo style={{ width: "220px", maxWidth: "70%", height: "auto" }} />
+          </div>
           <h1 className="mx-auto max-w-3xl text-4xl font-semibold leading-tight tracking-normal text-black sm:text-6xl">
             What product decision are you trying to make today?
           </h1>
