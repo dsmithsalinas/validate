@@ -45,6 +45,13 @@ Every recommendation should be traceable to evidence. When evidence is missing, 
 - [SPEC-004: Transformational Ideas Rule](docs/specs/SPEC-004-Transformational-Ideas-Rule.md)
 - [SPEC-005: Decision Debt Definition](docs/specs/SPEC-005-Decision-Debt-Definition.md)
 
+## Brand
+
+- [Brand System](brand/BRAND.md)
+- [Brand Folder README](brand/README.md)
+- [Asset Export Plan](brand/ASSET_EXPORTS.md)
+- [Landing Page Brand Narrative](docs/brand/LANDING_PAGE_BRAND_NARRATIVE.md)
+
 ## Prompts
 
 - [PROMPT-001: Validate System Instructions](docs/prompts/PROMPT-001-Validate-System-Instructions.md)
